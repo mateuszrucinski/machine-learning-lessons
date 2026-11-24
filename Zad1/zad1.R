@@ -55,7 +55,7 @@ wesbrooks %>%
 wesbrooks %>%
   ggplot() +
   geom_bar(mapping = aes(x = GRADYR1, fill = WESBROOK), color = "black") +
-  labs(title = "Wesbrook Donors vs. Non-donors by Graduation Year", x = "Graduation year (GRADYR1)", y = "Number of people") +
+  labs(title = "Wesbrook Members vs. Others by Graduation Year", x = "Graduation year (GRADYR1)", y = "Number of people") +
   theme_minimal() +
   theme(text = element_text(size = 14))
 
@@ -129,7 +129,7 @@ prop.table(table(wesbrooks$PROV,     wesbrooks$WESBROOK), margin = 1)
 wesbrooks %>%
   ggplot() +
   geom_bar(mapping = aes(x = MARITAL, fill = WESBROOK), color = "black", position = "fill") +
-  labs(title = "Share of Wesbrook Donors by Marital Status", x = "MARITAL", y = "Share") +
+  labs(title = "Share of Wesbrook Members by Marital Status", x = "MARITAL", y = "Share") +
   theme_minimal() +
   theme(text = element_text(size = 14))
 
