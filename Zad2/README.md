@@ -40,6 +40,6 @@ Progress in Artificial Intelligence (2013): pp. 1-15, Springer Berlin Heidelberg
 
 ## Pliki
 
-- `BikeSharing.ipynb` – notatnik (R) z rozwiązaniem i opisem kolejnych kroków
+- `zad2.ipynb` – notatnik (R) z rozwiązaniem i opisem kolejnych kroków
 - `zad2.R` – ten sam kod jako skrypt R
 - `day.csv`, `hour.csv` – dane

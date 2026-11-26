@@ -1,12 +1,11 @@
-# MUM - zadanie 2 (analiza regresji, zbior Bike Sharing)
-# Kod zgodny z notatnikiem BikeSharing.ipynb
-# Uruchamiac z folderu Zad2 (pliki day.csv i hour.csv)
-
 library(tidyverse)
 library(car)
 library(corrplot)
 
 options(repr.plot.width = 14, repr.plot.height = 8)
+
+
+#1. wczytanie danych
 
 day <- read_csv("day.csv", col_types = "iDfffffffnnnniii")
 hour <- read_csv("hour.csv", col_types = "iDffffffffnnnniii")
@@ -14,9 +13,8 @@ hour <- read_csv("hour.csv", col_types = "iDffffffffnnnniii")
 glimpse(day)
 
 
-#------------------------------------------------------------
-# Wstępna analiza zmiennych
-#------------------------------------------------------------
+
+#2. wstępna analiza zmiennych
 
 summary(day)
 
@@ -38,9 +36,8 @@ day %>%
   theme(text = element_text(size = 14))
 
 
-#------------------------------------------------------------
-# Korelacje
-#------------------------------------------------------------
+
+#3. korelacje
 
 # czy cnt to suma casual i registered
 all(day$cnt == day$casual + day$registered)
@@ -49,6 +46,10 @@ kor <- cor(select(day, temp, atemp, hum, windspeed, casual, registered, cnt))
 corrplot(kor, method = "number")
 
 scatterplotMatrix(~ cnt + temp + hum + windspeed, data = day, diagonal = list(method = "boxplot"))
+
+# współczynnik korelacji r między cnt a każdą zmienną
+day %>%
+  summarize(across(c(temp, hum, windspeed), ~ round(cor(cnt, .x), 2)))
 
 scatterplot(cnt ~ temp, data = day, boxplots = "xy")
 
@@ -60,10 +61,12 @@ Boxplot(cnt ~ holiday, data = day, main = "holiday")
 
 table(day$workingday, day$weekday)
 
+# czy workingday = poniedziałek-piątek i nie święto
+all(day$workingday == ifelse(day$weekday %in% 1:5 & day$holiday == 0, 1, 0))
 
-#------------------------------------------------------------
-# Model liniowy (day)
-#------------------------------------------------------------
+
+
+#4. model liniowy (day)
 
 day.model1 <- lm(cnt ~ season + yr + mnth + holiday + weekday + weathersit + temp + hum + windspeed, data = day)
 summary(day.model1)
@@ -82,9 +85,8 @@ modele <- list(
 sapply(modele, function(m) round(summary(m)$adj.r.squared, 4))
 
 
-#------------------------------------------------------------
-# Model nieliniowy (day)
-#------------------------------------------------------------
+
+#5. model nieliniowy (day)
 
 day.model2 <- lm(cnt ~ season + yr + mnth + holiday + weekday + weathersit + temp + I(temp^2) + hum + windspeed, data = day)
 summary(day.model2)
@@ -116,9 +118,8 @@ rbind("liniowy"          = ocena(day.model1, day$cnt),
       "logarytmiczny"    = ocena(day.model3, day$cnt, log = TRUE))
 
 
-#------------------------------------------------------------
-# Dane godzinowe (hour)
-#------------------------------------------------------------
+
+#6. dane godzinowe (hour)
 
 hour %>%
   ggplot() +
@@ -138,8 +139,3 @@ Anova(hour.model3)
 rbind("liniowy"                       = ocena(hour.model1, hour$cnt),
       "logarytmiczny"                 = ocena(hour.model2, hour$cnt, log = TRUE),
       "logarytmiczny + hr*workingday" = ocena(hour.model3, hour$cnt, log = TRUE))
-
-
-#------------------------------------------------------------
-# Wybór najlepszego modelu
-#------------------------------------------------------------
